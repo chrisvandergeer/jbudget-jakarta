@@ -1,0 +1,12 @@
+<job id="myBatchJob" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
+        <step id="prepare" next="firstChunkStep">
+            <batchlet ref="prepareBatch"></batchlet>
+        </step>
+        <step id="firstChunkStep">
+            <chunk item-count="10">
+                <reader ref="myBatchItemReader"/>
+                <processor ref="myBatchItemProcessor"/>
+                <writer ref="myBatchChunkWriter"/>
+            </chunk>
+        </step>
+</job>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+          integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <title>Java batch</title>
+</head>
+<body>
+<div style="margin: 20px;">
+    <h1>Upload transakties</h1>
+    <div id="app">
+        <div class="shadow p-3 mb-5 bg-white rounded">
+            <h3>Upload</h3>
+            <div class="form-group">
+                <form action="upload" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file"/>
+                    <input type="submit"/>
+                </form>
+            </div>
+        </div>
+        <div class="alert alert-primary" role="alert">
+            <a href="transakties.html">&lt;&lt; terug naar transakties</a>
+        </div>
+    </div>
+</div>
+<script>
+    var app = new Vue({
+        el: "#app",
+        data: {
+            transakties: {},
+            zoekopdracht: {
+                "tegenpartij": "",
+                "omschrijving": "",
+                "tag": "",
+                "tag2add": ""
+            }
+        },
+        methods: {
+            findTransakties: function () {
+                if (this.zoekopdracht.tag.trim() === '' || this.zoekopdracht.tag.endsWith(' ')) {
+                    let xmlhttp = new XMLHttpRequest();
+                    const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/transaktie';
+                    xmlhttp.open("POST", url);
+                    xmlhttp.setRequestHeader('Content-Type', 'application/json');
+                    xmlhttp.send(JSON.stringify(this.zoekopdracht));
+                    xmlhttp.onload = (e) => {
+                        this.transakties = JSON.parse(xmlhttp.response);
+                    }
+                }
+            },
+            addTag: function () {
+                let xmlhttp = new XMLHttpRequest();
+                const url = 'http://localhost:9080/jakarta_ee_8_war_exploded/resources/transaktie/addtag';
+                xmlhttp.open("POST", url);
+                xmlhttp.setRequestHeader('Content-Type', 'application/json');
+                xmlhttp.send(JSON.stringify(this.zoekopdracht));
+                xmlhttp.onload = (e) => {
+                    this.transakties = JSON.parse(xmlhttp.response);
+                }
+            }
+        }
+    });
+    app.findTransakties();
+</script>
+</body>
+</html>
