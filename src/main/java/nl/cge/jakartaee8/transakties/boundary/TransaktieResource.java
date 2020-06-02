@@ -6,6 +6,8 @@ import nl.cge.jakartaee8.transakties.entity.Maandtotaal;
 import nl.cge.jakartaee8.transakties.entity.Transaktie;
 import nl.cge.jakartaee8.transakties.entity.ZoekOpdracht;
 import nl.cge.jakartaee8.transakties.entity.ZoekResultaat;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 @Path("transaktie")
 public class TransaktieResource {
 
+    private Logger logger = LogManager.getLogger(getClass());
+
     @PersistenceContext(name = "my-pu")
     private EntityManager em;
 
@@ -32,11 +36,13 @@ public class TransaktieResource {
 
     @GET
     public ZoekResultaat findAll() {
+        logger.info("findAll");
         return find(new ZoekOpdracht());
     }
 
     @POST
     public ZoekResultaat find(ZoekOpdracht zoekOpdracht) {
+        logger.info("find {}", zoekOpdracht);
         List<Transaktie> transacties = findTransaktiesService.findTransacties(zoekOpdracht);
         return createZoekResultaat(zoekOpdracht, transacties);
     }
@@ -44,6 +50,7 @@ public class TransaktieResource {
     @POST
     @Path("tag")
     public ZoekResultaat tag(ZoekOpdracht zoekOpdracht) {
+        logger.info("tag");
         List<Transaktie> transakties = findTransaktiesAndTag(zoekOpdracht);
         return createZoekResultaat(zoekOpdracht, transakties);
     }
@@ -51,6 +58,7 @@ public class TransaktieResource {
     @POST
     @Path("tagAndSave")
     public ZoekResultaat tagAndSave(ZoekOpdracht zoekOpdracht) {
+        logger.info("tagAndSave");
         List<Transaktie> transakties = findTransaktiesAndTag(zoekOpdracht);
         em.persist(zoekOpdracht);
         return createZoekResultaat(zoekOpdracht, transakties);
